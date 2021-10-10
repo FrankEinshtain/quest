@@ -1,0 +1,15 @@
+public
+.cache
+.vscode
+node_modules
+*.json
+*.toml
+*.png
+src/components
+static
+content
+LICENSE
+yarn.lock
+yarn-error.log
+build
+_redirects
