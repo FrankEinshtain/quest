@@ -5,17 +5,17 @@ import { graphql, Link, PageProps } from 'gatsby'
 // import Layout from "../components/layout"
 // import Seo from "../components/seo"
 
-type DataProps = {
-  site: {
-    buildTime: string
-    siteMetadata: {
-      name: string
-      tagline: string
-    }
-  }
-}
+// type DataProps = {
+//   site: {
+//     buildTime: string
+//     siteMetadata: {
+//       name: string
+//       tagline: string
+//     }
+//   }
+// }
 
-const NotFoundPage: React.FC<PageProps<DataProps>> = ({ data, path }) => {
+const NotFoundPage = ({ data, path }) => {
   const { buildTime } = data.site
   const { name, tagline } = data.site.siteMetadata
   return (

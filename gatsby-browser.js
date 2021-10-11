@@ -1,4 +1,4 @@
-// import './src/scss/_main.scss'
+import './src/scss/_main.scss'
 
 // import React, { useState, useEffect } from 'react'
 // import { silentAuth } from './src/utils/auth'
