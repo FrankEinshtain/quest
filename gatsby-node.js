@@ -1,12 +1,12 @@
-exports.onCreatePage = async ({ page, actions }) => {
-  const { createPage } = actions
+// exports.onCreatePage = async ({ page, actions }) => {
+//   const { createPage } = actions
 
-  if (page.path.match(/^\/thegame/)) {
-    page.matchPath = '/thegame/*'
+//   if (page.path.match(/^\/thegame/)) {
+//     page.matchPath = '/thegame/*'
 
-    createPage(page)
-  }
-}
+//     createPage(page)
+//   }
+// }
 
 exports.onCreateWebpackConfig = ({ stage, loaders, actions }) => {
   console.log('onCreateWebpackConfig stage :>> ', stage)
