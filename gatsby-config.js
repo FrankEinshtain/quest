@@ -15,8 +15,8 @@ module.exports = {
     {
       resolve: 'gatsby-theme-auth0',
       options: {
-        // domain: process.env.GATSBY_AUTH0_DOMAIN,
-        domain: process.env.GATSBY_AUTH0_APP_ID,
+        domain: process.env.GATSBY_AUTH0_DOMAIN,
+        // domain: process.env.GATSBY_AUTH0_APP_ID,
         clientID: process.env.GATSBY_AUTH0_CLIENT_ID,
         redirectUri: process.env.GATSBY_AUTH0_CALLBACK_URL,
         // audience: process.env.AUTH0_AUDIENCE, // Optional
