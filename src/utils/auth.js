@@ -11,7 +11,7 @@ const auth = isBrowser
       clientID: process.env.GATSBY_AUTH0_CLIENT_ID,
       redirectUri: process.env.GATSBY_AUTH0_CALLBACK_URL,
       responseType: 'token id_token',
-      scope: 'openid profile email',
+      //   scope: 'openid profile email',
     })
   : {}
 
@@ -29,7 +29,7 @@ const auth = isBrowser
 //   if (!GATSBY_APP_DOMAIN || !GATSBY_APP_AUTH0_CLIENT_ID) {
 //     throw new Error('auth argumesnts missing')
 //   }
-//   const authOpts: AuthOptions = {
+//   const authOpts = {
 //     domain: GATSBY_APP_DOMAIN,
 //     clientID: GATSBY_APP_AUTH0_CLIENT_ID,
 //     redirectUri: GATSBY_APP_BASE_URL,
@@ -40,12 +40,6 @@ const auth = isBrowser
 // }
 
 // const instance = auth()
-
-// interface TokensTypes {
-//   accessToken: string | null
-//   idToken: string | null
-//   expiresAt: number | null
-// }
 
 const tokens = {
   accessToken: false,
@@ -80,6 +74,8 @@ const setSession =
       return
     }
 
+    authResult && console.log('authResult :>> ', authResult)
+
     if (authResult && authResult.accessToken && authResult.idToken) {
       let expiresAt = authResult.expiresIn * 1000 + new Date().getTime()
       tokens.accessToken = authResult.accessToken
@@ -104,6 +100,11 @@ export const getProfile = () => {
   return user
 }
 
+export const silentAuth = (callback = () => {}) => {
+  if (!isAuthenticated()) return callback()
+  auth.checkSession({}, setSession(callback))
+}
+
 // let user = {}
 
 // export const isAuthenticated = () => {
@@ -122,7 +123,7 @@ export const getProfile = () => {
 //   authInstance.authorize()
 // }
 
-// const setSession = (cb: any) => (err: Auth0Error, authResult: Auth0DecodedHash) => {
+// const setSession = (cb) => (err, authResult) => {
 //   if (err) {
 //     navigate('/')
 //     cb()

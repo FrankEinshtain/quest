@@ -17,6 +17,19 @@ const IndexPage = ({ data, path }) => {
   const { isLoggedIn, profile } = useAuth()
   console.log('profile :>> ', profile)
 
+  React.useEffect(() => {
+    console.log('window :>> ', window)
+    // window.fbAsyncInit({
+    //   appId: process.env.GATSBY_FACEBOOK_APP_ID,
+    //   version: 'v2.7',
+    // })
+    window.FB &&
+      window.FB.getLoginStatus(function (response) {
+        console.log('FB getLoginStatus response :>> ', response)
+        // statusChangeCallback(response)
+      })
+  })
+
   // const user = getProfile()
 
   return (

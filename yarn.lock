@@ -3368,7 +3368,7 @@ commander@^7.2.0:
   resolved "https://registry.yarnpkg.com/commander/-/commander-7.2.0.tgz#a36cb57d0b501ce108e4d20559a150a391d97ab7"
   integrity sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==
 
-common-tags@^1.8.0:
+common-tags@^1.6.0, common-tags@^1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/common-tags/-/common-tags-1.8.0.tgz#8e3153e542d4a39e9b10554434afaaf98956a937"
   integrity sha512-6P6g0uetGpW/sdyUy/iQQCbFF0kWVMSIVSyYz7Zgjcgh8mgw8PQzDNZeyZ5DQ2gM7LBoZPHmnjz8rUthkBG5tw==
@@ -5659,6 +5659,13 @@ gatsby-page-utils@^0.9.1:
     glob "^7.1.6"
     lodash "^4.17.20"
     micromatch "^4.0.2"
+
+gatsby-plugin-facebook-sdk@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-facebook-sdk/-/gatsby-plugin-facebook-sdk-1.0.6.tgz#dbfe122cc7739a6db80ccfeb4a624eaf8dcd80a8"
+  integrity sha512-wGK+mJwYBxK2DdIbjN8r4ovrgUOsCWj9UEDGdoTOzJvI6A1/ZoMW8tc8tFyP0q+P0B0VjcOSUZFzipFodHh/OA==
+  dependencies:
+    common-tags "^1.6.0"
 
 gatsby-plugin-page-creator@^2.10.2:
   version "2.10.2"

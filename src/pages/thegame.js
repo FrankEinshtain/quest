@@ -5,23 +5,25 @@ import { graphql } from 'gatsby'
 // import { login, isAuthenticated, getProfile } from '../utils/auth'
 import { Layout } from '../components/shared/Layout'
 
-const THeGame = ({ user }) => {
+const TheGame = ({ user }) => {
   return (
-    <>
+    <Layout>
       <p>Hi, {user.profile.nickname ? user.profile.nickname : 'friend'}!</p>
       <pre>{JSON.stringify(user.profile, null, 2)}</pre>
-    </>
+    </Layout>
   )
 }
 
 // const Settings = () => <p>Settings</p>
 // const Billing = () => <p>Billing</p>
 
-const TheGame = ({ data }) => {
-  return (
-    <Layout>
-      <h2>thegame</h2>
-      {/* <nav>
+// const TheGame = ({ data }) => {
+//   return (
+//     <Layout>
+//       <h2>thegame</h2>
+
+{
+  /* <nav>
         <Link to='/account/'>Home</Link> <Link to='/account/settings/'>Settings</Link>{' '}
         <Link to='/account/billing/'>Billing</Link>{' '}
       </nav>
@@ -29,15 +31,18 @@ const TheGame = ({ data }) => {
         <Home path='/account/' user={user} />
         <Settings path='/account/settings' />
         <Billing path='/account/billing' />
-      </Router> */}
-      {/* <Router>
+      </Router> */
+}
+{
+  /* <Router>
         <PrivateRoute component={Home} path='/thegame' />
         <PrivateRoute component={Settings} path='/thegame/settings' />
         <PrivateRoute component={Billing} path='/thegame/billing' />
-      </Router> */}
-    </Layout>
-  )
+      </Router> */
 }
+//     </Layout>
+//   )
+// }
 
 export default TheGame
 

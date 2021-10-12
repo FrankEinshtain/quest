@@ -21,6 +21,8 @@ import './src/scss/_main.scss'
 //   return <SessionCheck>{children}</SessionCheck>
 // }
 
+// ///////////////////////////////////////////
+
 // class SessionCheck extends React.Component {
 //   constructor(props) {
 //     super(props)
