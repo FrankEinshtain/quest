@@ -1,15 +1,25 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { graphql } from 'gatsby'
 // import { graphql, Link, PageProps } from 'gatsby'
 // import { Router } from '@reach/router'
 // import { login, isAuthenticated, getProfile } from '../utils/auth'
 import { Layout } from '../components/shared/Layout'
-
-const TheGame = ({ user }) => {
+const TheGame = (props) => {
+  console.log('TheGame props :>> ', props)
+  // const TheGame = ({ user }) => {
+  // const [_user, set_user] = useState(user)
+  // useEffect(() => {
+  //   set_user(user)
+  // }, [user])
   return (
     <Layout>
-      <p>Hi, {user.profile.nickname ? user.profile.nickname : 'friend'}!</p>
-      <pre>{JSON.stringify(user.profile, null, 2)}</pre>
+      {/* {_user && (
+        <>
+          <p>Hi, {_user.profile.nickname ? _user.profile.nickname : 'friend'}!</p>
+          <pre>{JSON.stringify(_user.profile, null, 2)}</pre>
+        </>
+      )} */}
+      <h2>thegamE</h2>
     </Layout>
   )
 }

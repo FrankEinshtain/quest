@@ -1,14 +1,14 @@
 require('dotenv').config({
   path: `.env.${process.env.NODE_ENV}`,
 })
-
+console.log('gatsby-config process.env.GATSBY_AUTH0_DOMAIN :>> ', process.env.GATSBY_AUTH0_DOMAIN)
 module.exports = {
   siteMetadata: {
     name: `My First Typescript Quest`,
-    tagline: `Gatsby + SASS + not yet Typescript + ME! = 💪`,
-    title: 'My Title',
-    description: 'My description',
-    author: 'ME',
+    tagline: `Gatsby tagline 💪`,
+    title: 'My gatsby-config Title',
+    description: 'My gatsby-config description',
+    author: 'gatsby-config ME',
   },
   plugins: [
     'gatsby-plugin-sass',

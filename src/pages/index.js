@@ -15,27 +15,44 @@ const IndexPage = ({ data, path }) => {
   const { name, tagline } = data.site.siteMetadata
 
   const { isLoggedIn, profile } = useAuth()
-  console.log('profile :>> ', profile)
+  const [authName, setAuthName] = React.useState(null)
+  const [authId, setAuthId] = React.useState(null)
+  const [currentProfile, setCurrentProfile] = React.useState(profile)
+
+  React.useEffect(() => {
+    setCurrentProfile(profile)
+  }, [profile])
 
   React.useEffect(() => {
     console.log('window :>> ', window)
-    // window.fbAsyncInit({
-    //   appId: process.env.GATSBY_FACEBOOK_APP_ID,
-    //   version: 'v2.7',
-    // })
-    window.FB &&
-      window.FB.getLoginStatus(function (response) {
-        console.log('FB getLoginStatus response :>> ', response)
-        // statusChangeCallback(response)
-      })
-  })
 
+    if (window && window.FB) {
+      if (!authName) {
+        window.FB.login(function (response) {
+          console.log('login response,\n', response)
+          if (response.authResponse) {
+            console.log('Welcome!  Fetching your information.... ')
+            window.FB.api('/me', function (response) {
+              console.log('Good to see you,\n', response)
+              if (response.name && response.id) {
+                console.log('isLoggedIn :>> ', isLoggedIn)
+                setAuthName(response.name)
+                setAuthId(response.id)
+              }
+            })
+          } else {
+            console.log('User cancelled login or did not fully authorize.')
+          }
+        })
+      }
+    }
+  })
   // const user = getProfile()
 
   return (
     <Layout>
       <div className='content'>
-        <h1>{name}</h1>
+        {authName && <h1>{authName}</h1>}
         <h2>{tagline}</h2>
         {isLoggedIn ? (
           <button onClick={AuthService.logout}>Logout</button>
@@ -71,3 +88,5 @@ export const query = graphql`
 //     }
 //   }
 // }
+
+// GATSBY_FACEBOOK_APP_ID = 398278374962838
