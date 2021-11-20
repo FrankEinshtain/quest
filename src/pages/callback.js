@@ -1,8 +1,8 @@
 import React from 'react'
-import { handleAuthentication } from '../utils/auth'
+// import { handleAuthentication } from '../utils/auth'
 
 const Callback = () => {
-  handleAuthentication()
+  // handleAuthentication()
   console.log('callback component works!')
 
   return <p>Loading...</p>
