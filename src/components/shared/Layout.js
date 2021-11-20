@@ -1,48 +1,35 @@
 import React from 'react'
-// import { SessionContext } from 'gatsby-theme-auth0'
-import { Header } from './Header'
+// import { Link } from '@reach/router'
+import { useStaticQuery, Link, graphql } from 'gatsby'
+import UserContext, { UserContextProvider } from '../../context/userContext'
+import Seo from '../Seo'
+import Header from './Header'
+import Footer from './Footer'
 
-export const Layout = ({ children }) => {
+const isBrowser = typeof window !== 'undefined'
+
+const Layout = ({ children }) => {
+  const data = useStaticQuery(graphql`
+    query {
+      site {
+        siteMetadata {
+          title
+        }
+      }
+    }
+  `)
   // const session = React.useContext(SessionContext)
+  // UserContextProvider
   return (
-    // <div
-    //   style={{
-    //     display: 'flex',
-    //     minHeight: '100vh',
-    //     padding: '20px',
-    //     flexDirection: 'column',
-    //     boxSizing: 'border-box',
-    //   }}
-    // >
-    <>
-      <Header />
-      <main>{children}</main>
-      <footer>FooTer</footer>
-    </>
-    // </div>
+    isBrowser && (
+      <>
+        <Seo />
+        <Header />
+        <main>{children}</main>
+        <Footer />
+      </>
+    )
   )
 }
 
-// import * as React from 'react'
-// // import { graphql, Link, PageProps } from 'gatsby'
-// // import * as styles from '../../scss/components/Layout.module.scss'
-// import Seo from '../Seo'
-
-// interface LayoutProps {
-//   children: React.ReactChild | React.ReactChildren | JSX.Element[]
-// }
-
-// const Layout: React.FC<LayoutProps> = ({ children }) => {
-//   return (
-//     <>
-//       <Seo />
-//       <div>
-//         <header>Header</header>
-//         {children}
-//         <footer>Footer</footer>
-//       </div>
-//     </>
-//   )
-// }
-
-// export default Layout
+export default Layout

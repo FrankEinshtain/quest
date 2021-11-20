@@ -1,67 +1,38 @@
 import './src/scss/_main.scss'
-// window.fbAsyncInit = function () {
-//   window.FB &&
-//     window.FB.init({
-//       appId: process.env.GATSBY_FACEBOOK_APP_ID,
-//       cookie: true,
-//       xfbml: true,
-//       version: 'v12.0',
-//     })
-
-//   window.FB.AppEvents.logPageView()
-// }
-// ;(function (d, s, id) {
-//   var js,
-//     fjs = d.getElementsByTagName(s)[0]
-//   if (d.getElementById(id)) {
-//     return
-//   }
-//   js = d.createElement(s)
-//   js.id = id
-//   js.src = 'https://connect.facebook.net/en_US/sdk.js'
-//   fjs.parentNode.insertBefore(js, fjs)
-// })(document, 'script', 'facebook-jssdk')
-
 import React, { useState, useEffect } from 'react'
+import { UserContextProvider } from './src/context/userContext'
+import Layout from './src/components/shared/Layout'
 import { silentAuth } from './src/utils/auth'
 
-// const SessionCheck = ({ children }) => {
-//   const [isLoading, setIsLoading] = useState(true)
+const isBrowser = typeof window !== 'undefined'
 
-//   const handleCheckSession = () => {
-//     setIsLoading(false)
-//   }
+export const SessionCheck = ({ children }) => {
+  const [isGatsbyBrowserLoading, setIsGatsbyBrowserLoading] = useState(true)
 
-//   useEffect(() => {
-//     silentAuth(handleCheckSession)
-//   })
+  const handleCheckSession = () => {
+    setIsGatsbyBrowserLoading(false)
+  }
 
-//   return isLoading === false && <>{children}</>
-// }
-
-// export const wrapRootElement = ({ children }) => {
-//   return <SessionCheck>{children}</SessionCheck>
-// }
-
-// ///////////////////////////////////////////
-
-class SessionCheck extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      loading: true,
+  useEffect(() => {
+    if (isBrowser) {
+      console.log('SessionCheck before silentAuth :>> ')
+      silentAuth(handleCheckSession)
     }
-  }
+  })
 
-  handleCheckSession = () => {
-    this.setState({ loading: false })
-  }
-
-  componentDidMount() {
-    silentAuth(this.handleCheckSession)
-  }
-
-  render() {
-    return this.state.loading === false && <React.Fragment>{this.props.children}</React.Fragment>
-  }
+  return isGatsbyBrowserLoading ? (
+    <div>
+      <h2>gatsby-browser Loading..</h2>
+    </div>
+  ) : (
+    <>{children}</>
+  )
 }
+
+export const wrapPageElement = ({ element }) => (
+  <SessionCheck>
+    <UserContextProvider>
+      <Layout>{element}</Layout>
+    </UserContextProvider>
+  </SessionCheck>
+)

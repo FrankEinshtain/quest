@@ -1,3 +1,9 @@
 body {
   background-color: lightgrey;
 }
+
+@import './pages/index';
+@import './pages/game';
+@import './abstract/reset';
+@import './abstract/variables';
+@import './components/layout';
