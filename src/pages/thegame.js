@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { graphql, Link, navigate } from 'gatsby'
-// import { Router, Link, Default } from '@reach/router'
-import { useAuth } from 'gatsby-theme-auth0'
+import { navigate } from 'gatsby'
+import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import QuestionItem from '../components/QuestionItem'
 import { userObjectBeforeStart, startedUser } from '../data'
 
@@ -40,7 +39,15 @@ const handleAnswer = async (userId, questionId, answer) => {
 
 const TheGame = (props) => {
   // console.log('TheGame props :>> ', props)
-  const { isLoading, isLoggedIn, profile } = useAuth()
+  const {
+    isLoading,
+    isAuthenticated,
+    error,
+    user,
+    loginWithRedirect,
+    getAccessTokenSilently,
+    logout,
+  } = useAuth0()
 
   const [userInfo, setUserInfo] = useState(null)
   const [questions, setQuestions] = useState(null)
@@ -92,8 +99,8 @@ const TheGame = (props) => {
   useEffect(() => {
     ;(async () => {
       try {
-        if (profile) {
-          const regUser = await handleRegUser(profile)
+        if (user) {
+          const regUser = await handleRegUser(user)
           if (regUser.success) {
             const { id, name, startTime } = regUser.data
             if (regUser.data.startTime) {
@@ -112,7 +119,7 @@ const TheGame = (props) => {
         console.log('user update error :>> ', e)
       }
     })()
-  }, [profile])
+  }, [user])
 
   // useEffect(() => {
   //   console.log('questions :>> ', questions)
@@ -122,7 +129,7 @@ const TheGame = (props) => {
   //   console.log('userInfo :>> ', userInfo)
   // }, [userInfo])
 
-  if (!isBrowser || !isLoggedIn || window.location.pathname !== `/thegame`) {
+  if (!isBrowser || !isAuthenticated || window.location.pathname !== `/thegame`) {
     navigate(`/`)
     return null
   }
@@ -151,7 +158,7 @@ const TheGame = (props) => {
   )
 }
 
-export default TheGame
+export default withAuthenticationRequired(TheGame)
 
 // export const query = graphql`
 //   {

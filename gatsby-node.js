@@ -1,6 +1,6 @@
 exports.onCreatePage = async ({ page, actions }) => {
   const { createPage } = actions
-  console.log('onCreatePage page :>> ', page)
+  // console.log('onCreatePage page :>> ', page)
   if (page.path.match(/^\/thegame/)) {
     page.matchPath = '/thegame/*'
 
