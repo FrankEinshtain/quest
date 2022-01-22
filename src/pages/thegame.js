@@ -45,7 +45,7 @@ const TheGame = (props) => {
               method: 'POST',
               url: `/api/registerUser`,
               // url: `http://localhost:3000/reguser`,
-              data: profile,
+              data: user,
               headers,
             })
             // console.log('res :>> ', res)
