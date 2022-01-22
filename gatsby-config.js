@@ -1,5 +1,8 @@
+// require('dotenv').config({
+//   path: `.env.${process.env.NODE_ENV}`,
+// })
 require('dotenv').config({
-  path: `.env.${process.env.NODE_ENV}`,
+  path: `.env`,
 })
 
 module.exports = {
@@ -11,6 +14,12 @@ module.exports = {
     author: 'gatsby-config ME',
   },
   plugins: [
+    // {
+    //   resolve: `gatsby-plugin-sass`,
+    //   options: {
+    //     implementation: require('node-sass'),
+    //   },
+    // },
     'gatsby-plugin-sass',
     // 'gatsby-plugin-netlify',
     //

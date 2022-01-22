@@ -1,24 +1,83 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useReducer } from 'react'
 
-// const defaultState = {
-//   dark: false,
-//   toggleDark: () => {},
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'REGISTER_USER':
+      return {
+        ...state,
+        isLoading: true,
+      }
+    case 'START_THE_GAME':
+      return {
+        ...state,
+        isAuthenticated: !!action.user,
+        user: action.user,
+        isLoading: false,
+        error: undefined,
+      }
+    case 'ANSWER_THE_QUESTION':
+      return {
+        ...state,
+        isLoading: false,
+        error: action.error,
+      }
+  }
+}
+
+export const UserGettersContext = React.createContext()
+export const UserSettersContext = React.createContext()
+
+// export const UserContextProvider = (props) => {
+//   const initialState = {
+//     token: null,
+//     userInfo: null,
+//     questions: [],
+//   }
+
+//   const [state, dispatch] = useReducer(reducer, initialState)
+
+
+//   return (
+//       <UserGettersContext.Provider
+//         value={state}
+//       >
+//     <UserSettersContext.Provider
+//       value={dispatch}
+//     >
+//         {props.children}
+//     </UserSettersContext.Provider>
+//       </UserGettersContext.Provider>
+//   )
+
 // }
 
-const UserContext = React.createContext()
-
 export const UserContextProvider = (props) => {
-  const [userName, setUserName] = useState('qwerty')
+
+  const [token, setToken] = useState(null)
+  const [userInfo, setUserInfo] = useState(null)
+  const [questions, setQuestions] = useState([])
+
+
+
   return (
-    <UserContext.Provider
+    <UserSettersContext.Provider
       value={{
-        userName,
-        setUserName,
+        setToken,
+        setUserInfo,
+        setQuestions,
       }}
     >
-      {props.children}
-    </UserContext.Provider>
+      <UserGettersContext.Provider
+        value={{
+          token,
+          userInfo,
+          questions,
+        }}
+      >
+        {props.children}
+      </UserGettersContext.Provider>
+    </UserSettersContext.Provider>
   )
 }
 
-export default UserContext
+// export default UserContext

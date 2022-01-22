@@ -15,7 +15,7 @@ const IndexPage = ({ data, path }) => {
   return (
     isBrowser && (
       <div className='home-inner'>
-        <h1>HomePageComponent</h1>
+        <h1>HomePage - index</h1>
         <Link to='/thegame'>thegame</Link>
       </div>
     )

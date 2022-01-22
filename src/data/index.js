@@ -8,12 +8,15 @@ import { v4 as uuidv4 } from 'uuid'
 //   questions: null,
 // }
 const userId = uuidv4()
+
 export const userObjectBeforeStart = {
   id: userId, // uuid()
   name: 'frankie',
+  avatar: 'https://lh3.googleusercontent.com/a-/AOh14Gh28mjVQSZoZYPzi-xZnci05E4UHHUGXV2KkxHq',
   startTime: null, // or timestamp
-  currentGame: null,
-  currentQuestions: null,
+  questions: [],
+  // currentGame: null,
+  // currentQuestions: null,
 }
 
 export const questionItem = {
@@ -37,15 +40,17 @@ export const theGame = {
 export const startedUser = {
   id: userId,
   name: 'frankie',
+  avatar: 'https://lh3.googleusercontent.com/a-/AOh14Gh28mjVQSZoZYPzi-xZnci05E4UHHUGXV2KkxHq',
   startTime: 123456789, // timestamp
   // currentGame: {}, // zachem?
-  currentQuestions: [
+  questions: [
     {
       id: uuidv4(),
       text: 'blah-blah ##01',
       // answer: 'answer01',
       isDone: false, // or timestamp
-      faults: [], // or [timestamp]
+      // isDone: 1637649872353,
+      faults: [1637378672350], // or [timestamp]
       // isDisabled: false,
     },
     {
@@ -61,7 +66,7 @@ export const startedUser = {
       text: 'blah-blah blah-blah ##03',
       // answer: 'answer03',
       isDone: false, // or timestamp
-      faults: [], // or [timestamp]
+      faults: [1637377672350, 1637378672350, Date.now()], // or [timestamp]
       // isDisabled: false,
     },
   ],

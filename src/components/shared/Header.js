@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useMemo, useContext } from 'react'
 import { AuthService, useAuth0 } from '@auth0/auth0-react'
 // import { Link } from '@reach/router'
 import { useStaticQuery, Link, graphql } from 'gatsby'
 
-import UserContext from '../../context/userContext'
-
+import { UserGettersContext, UserSettersContext } from '../../context/userContext'
 const Header = () => {
-  console.log('useAuth0() :>> ', useAuth0())
+  console.log('Header window.location.origin :>> ', window.location.origin)
   const {
     isLoading,
     isAuthenticated,
@@ -16,8 +15,30 @@ const Header = () => {
     getAccessTokenSilently,
     logout,
   } = useAuth0()
-  const { userName, setUserName } = useContext(UserContext)
-  const [userAvatar, setUserAvatar] = useState('')
+
+  const { userInfo } = useContext(UserGettersContext)
+  // const { setUserInfo } = useContext(UserSettersContext)
+  const [userName, setUserName] = useState(() => userInfo?.name, [userInfo])
+  const [avatar, setAvatar] = useState(() => userInfo?.avatar, [userInfo])
+
+  // useEffect(() => {
+  //   console.log('header userName :>> ', userName)
+  // }, [userName])
+
+  // useEffect(() => {
+  //   console.log('header avatar :>> ', avatar)
+  // }, [avatar])
+
+  useEffect(() => {
+    if (userInfo) {
+      if (userInfo.name && !userName) {
+        setUserName(userInfo.name)
+      }
+      if (userInfo.avatar && !avatar) {
+        setAvatar(userInfo.avatar)
+      }
+    }
+  }, [userInfo])
 
   useEffect(() => {
     if (user) {
@@ -28,7 +49,7 @@ const Header = () => {
       }
 
       if (picture) {
-        setUserAvatar(picture)
+        setAvatar(picture)
       }
     }
   }, [user])
@@ -44,29 +65,32 @@ const Header = () => {
   `)
 
   return (
-    // <header>
-    //   <h2>HEADERrr</h2>
-    // </header>
-
     <header>
       <div className='inner'>
         <Link to='/'>
           <h3>{data.site.siteMetadata.title}</h3>
         </Link>
         <div className='user-block'>
-          {userAvatar && (
+          {avatar && (
             <div className='avatar-container'>
-              <img className='avatar-image' src={userAvatar} alt='' />
+              <img className='avatar-image' src={avatar} alt='' />
             </div>
           )}
           <div className='login-logout'>
             {isAuthenticated ? (
               <>
                 {userName && <h4>{userName}</h4>}
-                <button onClick={() => logout({ returnTo: window.location.origin })}>Logout</button>
+                <button
+                  // disabled={isLoading}
+                  onClick={() => logout({ returnTo: window.location.origin })}
+                >
+                  Logout
+                </button>
               </>
             ) : (
-              <button onClick={loginWithRedirect}>Login</button>
+              <button disabled={isLoading} onClick={loginWithRedirect}>
+                Login
+              </button>
             )}
           </div>
         </div>

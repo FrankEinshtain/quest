@@ -1,41 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { UserGettersContext, UserSettersContext } from '../context/userContext'
 import { navigate } from 'gatsby'
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import QuestionItem from '../components/QuestionItem'
-import { userObjectBeforeStart, startedUser } from '../data'
+import { registerUser, startTheGame, answerTheQuestion } from '../utils/lib'
 
 const isBrowser = typeof window !== 'undefined'
-
-const handleRegUser = async (profile) => {
-  console.log('handleRegUser profile :>> ', profile)
-  return { success: true, data: userObjectBeforeStart }
-}
-
-const handleStartTheGame = async (userId) => {
-  console.log('handleStartTheGame userId :>> ', userId)
-  return new Promise((res, rej) => {
-    setTimeout(() => {
-      console.log('handleStartTheGame :>> ')
-      return res({ success: true, data: startedUser })
-    }, 2000)
-  })
-}
-
-const handleAnswer = async (userId, questionId, answer) => {
-  return new Promise((res, rej) => {
-    setTimeout(() => {
-      console.log('handleAnswer answer :>> ', answer)
-      // return res({
-      //   success: true,
-      //   data: { id: questionId, isDone: false, faults: [1637378672350, 1637378672388, Date.now()] },
-      // })
-      return res({
-        success: true,
-        data: { id: questionId, isDone: true, faults: [1637378672350, Date.now()] },
-      })
-    }, 2000)
-  })
-}
 
 const TheGame = (props) => {
   // console.log('TheGame props :>> ', props)
@@ -49,18 +19,57 @@ const TheGame = (props) => {
     logout,
   } = useAuth0()
 
-  const [userInfo, setUserInfo] = useState(null)
-  const [questions, setQuestions] = useState(null)
+  const { token, userInfo, questions } = useContext(UserGettersContext)
+  const { setToken, setUserInfo, setQuestions } = useContext(UserSettersContext)
+
+  // const [userInfo, setUserInfo] = useState(null)
+
+  // const [questions, setQuestions] = useState(null)
   const [isStartLoading, setIsStartLoading] = useState(false)
   const [isAnswerLoading, setIsAnswerLoading] = useState(false)
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        if (isAuthenticated) {
+          const accessToken = await getAccessTokenSilently({
+            audience: process.env.GATSBY_AUTH0_JWT_AUDIENCE,
+            scope: process.env.GATSBY_AUTH0_SCOPE,
+          })
+          // console.log('accessToken :>> ', accessToken)
+
+          if (accessToken) {
+            const regUser = await registerUser(user, accessToken)
+            console.log('regUser ResponCe :>> ', regUser)
+          }
+
+          // if (regUser.success) {
+          //   const { id, name, startTime, questions } = regUser.data
+          //   if (startTime) {
+          //     setQuestions(questions)
+          //   }
+          //   setUserInfo({
+          //     id,
+          //     name,
+          //     startTime,
+          //   })
+          // } else {
+          //   console.log('regUser.error :>> ', regUser.error)
+          // }
+        }
+      } catch (e) {
+        console.log('user update error :>> ', e)
+      }
+    })()
+  }, [user])
 
   const handleStart = async () => {
     try {
       setIsStartLoading(true)
-      const response = await handleStartTheGame(userInfo.id)
+      const response = await startTheGame(userInfo.id)
       if (response.success) {
-        if (response.data.currentQuestions) {
-          setQuestions(response.data.currentQuestions)
+        if (response.data.questions) {
+          setQuestions(response.data.questions)
         }
 
         const { id, name, startTime } = response.data
@@ -73,53 +82,58 @@ const TheGame = (props) => {
     }
   }
 
-  const handleSendAnswer = async (questionId, answer) => {
-    try {
-      setIsAnswerLoading(true)
-      const result = await handleAnswer(userInfo.id, questionId, answer)
-      if (result.success) {
-        questions.map((question) => {
-          if (question.id === result.data.id) {
-            if (!question.isDone) {
-              question.faults = result.data.faults
-            }
-            question.isDone = result.data.isDone
-          }
-          return question
-        })
-        setQuestions([...questions])
-      }
-      setIsAnswerLoading(false)
-    } catch (e) {
-      setIsAnswerLoading(false)
-      console.log('handleSendAnswer error catch :>> ', e)
-    }
-  }
+  // useEffect(() => {
+  //   ;(async () => {
+  //     try {
+  //       setIsLoadingGlobal(true)
+  //       if (!token) {
+  //         const accessToken = await getAccessTokenSilently({
+  //           audience: process.env.GATSBY_AUTH0_JWT_AUDIENCE,
+  //           scope: GATSBY_AUTH0_SCOPE,
+  //         })
+  //         setToken(accessToken)
+  //       } else {
+  //         const authUserData = await getAuthUser(token, user.sub)
+  //         if (authUserData.success) {
+  //           setUserId(authUserData.data)
+  //           const userData = await getUser(token, authUserData.data)
+  //           if (userData.success) {
+  //             setUserObject(userData.data)
+  //             setIsLoadingGlobal(false)
+  //           } else {
+  //             ntfErrorRefresh(smthWrong.error)
+  //           }
+  //         } else {
+  //           if (authUserData.error === noUserMsg) {
+  //             const { name, nickname, given_name, family_name, email, sub } = user
+  //             const userName =
+  //               name || nickname || given_name || family_name || email || 'noname user'
+  //             const newUser = await createUser(token, sub, userName, email)
+  //             if (newUser.success) {
+  //               const userData = await getUser(token, newUser.data)
+  //               if (userData.success) {
+  //                 setUserObject(userData.data)
+  //                 setIsLoadingGlobal(false)
+  //               } else {
+  //                 ntfErrorRefresh(userData.error)
+  //               }
+  //             } else {
+  //               ntfErrorRefresh(newUser.error)
+  //             }
+  //           } else {
+  //             ntfErrorRefresh(authUserData.error)
+  //           }
+  //         }
+  //       }
+  //     } catch (e) {
+  //       ntfErrorRefresh(e.message, 'getMenu error')
+  //       console.log('getMenu Error:\n', e.message)
+  //     }
+  //   })()
+  //   // eslint-disable-next-line
+  // }, [token])
 
-  useEffect(() => {
-    ;(async () => {
-      try {
-        if (user) {
-          const regUser = await handleRegUser(user)
-          if (regUser.success) {
-            const { id, name, startTime } = regUser.data
-            if (regUser.data.startTime) {
-              setQuestions(regUser.data.currentQuestions)
-            }
-            setUserInfo({
-              id,
-              name,
-              startTime,
-            })
-          } else {
-            console.log('regUser.error :>> ', regUser.error)
-          }
-        }
-      } catch (e) {
-        console.log('user update error :>> ', e)
-      }
-    })()
-  }, [user])
+  // //////////
 
   // useEffect(() => {
   //   console.log('questions :>> ', questions)
@@ -134,28 +148,43 @@ const TheGame = (props) => {
     return null
   }
 
-  return userInfo ? (
+  return (
     <div className='game-inner'>
       {isLoading && <div className='loading-block global'>loading</div>}
       {isStartLoading && <div className='loading-block starting'>starting</div>}
       {isAnswerLoading && <div className='loading-block answering'>answering</div>}
       <h2>The Game Page</h2>
-      <h3>{`hello ${userInfo.name}`}</h3>
-      {userInfo.startTime ? (
+      {userInfo && (
         <>
-          <div className='timer'>timer</div>
-          {questions &&
-            questions.map((question, q) => (
-              <QuestionItem key={q} question={question} handleSendAnswer={handleSendAnswer} />
-            ))}
+          <h3>{`hello ${userInfo.name}`}</h3>
+          {userInfo.startTime ? (
+            <>
+              <div className='timer'>timer</div>
+              {questions && (
+                <div className='questions-list'>
+                  {questions.map((question, q) => (
+                    <QuestionItem
+                      key={q}
+                      index={q + 1}
+                      questionId={question.id}
+                      setIsAnswerLoading={setIsAnswerLoading}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <button disabled={isLoading || isStartLoading} onClick={handleStart}>
+              lets start
+            </button>
+          )}
         </>
-      ) : (
-        <button onClick={handleStart}>lets start</button>
       )}
     </div>
-  ) : (
-    <h2>loadinggg..</h2>
   )
+  // ) : (
+  //   <h2>the game page is loading..</h2>
+  // )
 }
 
 export default withAuthenticationRequired(TheGame)

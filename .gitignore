@@ -63,3 +63,5 @@ yarn-error.log
 
 README.html
 .env.development
+
+.vercel
