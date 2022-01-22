@@ -4,7 +4,7 @@ import { navigate } from 'gatsby'
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import QuestionItem from '../components/QuestionItem'
 import { registerUser, startTheGame, answerTheQuestion } from '../utils/lib'
-
+import axios from 'axios'
 const isBrowser = typeof window !== 'undefined'
 
 const TheGame = (props) => {
@@ -39,8 +39,19 @@ const TheGame = (props) => {
           // console.log('accessToken :>> ', accessToken)
 
           if (accessToken) {
-            const regUser = await registerUser(user, accessToken)
-            console.log('regUser ResponCe :>> ', regUser)
+            // const regUser = await registerUser(user, accessToken)
+
+            const res = await axios({
+              method: 'POST',
+              url: `/api/registerUser`,
+              // url: `http://localhost:3000/reguser`,
+              data: profile,
+              headers,
+            })
+            // console.log('res :>> ', res)
+            // return res
+
+            console.log('registerUser ResponCe :>> ', res)
           }
 
           // if (regUser.success) {
