@@ -2,12 +2,12 @@ import './src/scss/_main.scss'
 import React from 'react'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { navigate } from 'gatsby'
-import { UserContextProvider } from './src/context/userContext'
 import Layout from './src/components/shared/Layout'
 
 const isBrowser = typeof window !== 'undefined'
 
 const onRedirectCallback = (appState) => {
+  console.log('\n\n#####\nonRedirectCallback appState :>> ', appState)
   navigate(appState?.returnTo || '/', { replace: true })
 }
 
@@ -23,9 +23,7 @@ export const wrapRootElement = ({ element }) => {
       // redirectUri={process.env.GATSBY_AUTH0_CALLBACK_URL}
       onRedirectCallback={onRedirectCallback}
     >
-      <UserContextProvider>
-        <Layout>{element}</Layout>
-      </UserContextProvider>
+      <Layout>{element}</Layout>
     </Auth0Provider>
   )
 }

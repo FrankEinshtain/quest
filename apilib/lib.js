@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken')
-const jwksClient = require('jwks-rsa')
+import jwt from 'jsonwebtoken'
+import jwksClient from 'jwks-rsa'
 
 const { GATSBY_AUTH0_JWT_AUDIENCE, GATSBY_AUTH0_DOMAIN } = process.env
 
@@ -7,7 +7,7 @@ const validateJwtWithSubject = async function (token) {
   let result = false
   try {
     const keyId = JSON.parse(Buffer.from(token.split('.')[0], 'base64').toString()).kid
-    console.log('keyId :>> ', keyId)
+    // console.log('keyId :>> ', keyId)
 
     const client = jwksClient({
       strictSsl: true,
@@ -26,13 +26,10 @@ const validateJwtWithSubject = async function (token) {
       },
       (err, decoded) => {
         if (decoded) {
-          console.log('decoded :>> ', decoded)
-          // result = { success: true, data: decoded.sub }
           result = true
         }
         if (err) {
           console.log('err :>> ', err)
-          // result = { success: false, error: err }
           result = false
         }
       }
@@ -44,6 +41,20 @@ const validateJwtWithSubject = async function (token) {
   }
 }
 
-module.exports = {
-  validateJwtWithSubject,
+const removeAnswers = (incomingObject) => {
+  const filterQuestions = (arr) => {
+    return arr.map((question, q) => {
+      question.answer = undefined
+      return question
+    })
+  }
+  if (incomingObject.currentGame) {
+    incomingObject.currentGame.questions = filterQuestions(incomingObject.currentGame.questions)
+  }
+  if (incomingObject.questions) {
+    incomingObject.questions = filterQuestions(incomingObject.questions)
+  }
+  return incomingObject
 }
+
+export { validateJwtWithSubject, removeAnswers }

@@ -2,6 +2,7 @@ import React from 'react'
 // import { Link } from '@reach/router'
 import { useStaticQuery, Link, graphql } from 'gatsby'
 import UserContext, { UserContextProvider } from '../../context/userContext'
+
 import Seo from '../Seo'
 import Header from './Header'
 import Footer from './Footer'
@@ -23,10 +24,12 @@ const Layout = ({ children }) => {
   return (
     isBrowser && (
       <>
-        <Seo />
-        <Header />
-        <main>{children}</main>
-        <Footer />
+        <UserContextProvider>
+          <Seo />
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </UserContextProvider>
       </>
     )
   )

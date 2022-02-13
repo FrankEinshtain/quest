@@ -1,28 +1,32 @@
-// const clientPromise = require('../apilib/mongo.js')
-// const { validateJwtWithSubject } = require('../apilib/lib.js')
-import { validateJwtWithSubject } from '../apilib/lib.js'
+// import { v4 as uuidv4 } from 'uuid'
+import { validateJwtWithSubject, removeAnswers } from '../apilib/lib.js'
+import { getCurrentUser } from '../apilib/mongoose.js'
 
-// module.exports = async (req, res) => {
-// }
+export default async function (req, res) {
+  console.log('registerUser Hits!\nBody :>> ', req.body)
 
-// module.exports = async (req, res) => {
-//   const client = await clientPromise
-//   // res.status(200).json({ dbName: client.db().databaseName })
-//   res.status(200).json({
-//     body: req.body,
-//     query: req.query,
-//     cookies: req.cookies,
-//   })
-// }
+  try {
+    const token = req.headers.authorization.split(' ')[1]
+    const isTokenValid = await validateJwtWithSubject(token)
+    if (!isTokenValid) {
+      res.status(403).json({ success: false, error: 'Authorization Failed!' })
+    }
 
-export default function (req, res) {
-  console.log('registerUser Hits!\nreq.body :>> ', req.body)
-  const isTokenValid = await validateJwtWithSubject(req.headers.authorization.split(' ')[1])
-  console.log('isTokenValid :>> ', isTokenValid)
-  res.status(200).json({
-    body: isTokenValid,
-    query: req.query,
-    cookies: req.cookies,
-    bingo: true,
-  })
+    const { given_name, family_name, nickName, name, email, sub } = req.body
+    let currentUser = await getCurrentUser({
+      authId: sub,
+      name: name || given_name || family_name || null,
+      nickName: nickName || null,
+      email: email,
+      currentGame: null,
+    })
+
+    if (currentUser.success) {
+      res.status(200).json({ success: true, data: removeAnswers(currentUser.data) })
+    } else {
+      res.status(200).json({ success: false, error: 'getUser error' })
+    }
+  } catch (e) {
+    res.status(200).json({ success: false, error: e.message })
+  }
 }

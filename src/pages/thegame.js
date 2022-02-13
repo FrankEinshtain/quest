@@ -3,12 +3,10 @@ import { UserGettersContext, UserSettersContext } from '../context/userContext'
 import { navigate } from 'gatsby'
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import QuestionItem from '../components/QuestionItem'
-import { registerUser, startTheGame, answerTheQuestion } from '../utils/lib'
 import axios from 'axios'
 const isBrowser = typeof window !== 'undefined'
 
-const TheGame = (props) => {
-  // console.log('TheGame props :>> ', props)
+const TheGame = () => {
   const {
     isLoading,
     isAuthenticated,
@@ -22,69 +20,59 @@ const TheGame = (props) => {
   const { token, userInfo, questions } = useContext(UserGettersContext)
   const { setToken, setUserInfo, setQuestions } = useContext(UserSettersContext)
 
-  // const [userInfo, setUserInfo] = useState(null)
-
-  // const [questions, setQuestions] = useState(null)
+  const [gameInfo, setGameInfo] = useState(null)
   const [isStartLoading, setIsStartLoading] = useState(false)
   const [isAnswerLoading, setIsAnswerLoading] = useState(false)
 
-  useEffect(() => {
-    ;(async () => {
-      try {
-        if (isAuthenticated) {
-          const accessToken = await getAccessTokenSilently({
-            audience: process.env.GATSBY_AUTH0_JWT_AUDIENCE,
-            scope: process.env.GATSBY_AUTH0_SCOPE,
-          })
-          // console.log('accessToken :>> ', accessToken)
+  const headers = {
+    'Content-Type': 'application/json',
+    // 'Access-Control-Allow-Origin': GATSBY_SERVER_URL,
+    Authorization: `Bearer ${token}`,
+  }
 
-          if (accessToken) {
-            // const regUser = await registerUser(user, accessToken)
+  // useEffect(() => {
+  //   if (userInfo) {
+  //     console.log('userInfo :>> ', userInfo)
+  //   }
+  // }, [userInfo])
 
-            const res = await axios({
-              method: 'POST',
-              url: `/api/registerUser`,
-              // url: `http://localhost:3000/reguser`,
-              data: user,
-              headers,
-            })
-            // console.log('res :>> ', res)
-            // return res
+  const handleAnswer = async (questionId, userInput) => {
+    console.log('questionId, userInput :>> ', questionId, userInput)
+    setIsStartLoading(true)
 
-            console.log('registerUser ResponCe :>> ', res)
-          }
+    try {
+    } catch (err) {
+      console.log('err :>> ', err)
+    }
 
-          // if (regUser.success) {
-          //   const { id, name, startTime, questions } = regUser.data
-          //   if (startTime) {
-          //     setQuestions(questions)
-          //   }
-          //   setUserInfo({
-          //     id,
-          //     name,
-          //     startTime,
-          //   })
-          // } else {
-          //   console.log('regUser.error :>> ', regUser.error)
-          // }
-        }
-      } catch (e) {
-        console.log('user update error :>> ', e)
-      }
-    })()
-  }, [user])
+    const res = await axios({
+      method: 'POST',
+      url: `/api/answerTheQuestion`,
+      data: { userId: userInfo.id, questionId, userInput },
+      headers,
+    })
+    console.log('res :>> ', res)
+    if (res.data.success) {
+      setGameInfo(res.data.data)
+    } else {
+      console.log('res.error :>> ', res.data.error)
+    }
+    setIsStartLoading(false)
+  }
 
   const handleStart = async () => {
     try {
       setIsStartLoading(true)
-      const response = await startTheGame(userInfo.id)
-      if (response.success) {
-        if (response.data.questions) {
-          setQuestions(response.data.questions)
-        }
-
-        const { id, name, startTime } = response.data
-        setUserInfo({ id, name, startTime })
+      const startedGame = await axios({
+        method: 'POST',
+        url: `/api/startTheGame`,
+        data: userInfo.id,
+        headers,
+      })
+      if (startedGame.data.success) {
+        setGameInfo(startedGame.data.data)
+        setIsStartLoading(false)
+      } else {
         setIsStartLoading(false)
       }
     } catch (e) {
@@ -93,71 +81,52 @@ const TheGame = (props) => {
     }
   }
 
-  // useEffect(() => {
-  //   ;(async () => {
-  //     try {
-  //       setIsLoadingGlobal(true)
-  //       if (!token) {
-  //         const accessToken = await getAccessTokenSilently({
-  //           audience: process.env.GATSBY_AUTH0_JWT_AUDIENCE,
-  //           scope: GATSBY_AUTH0_SCOPE,
-  //         })
-  //         setToken(accessToken)
-  //       } else {
-  //         const authUserData = await getAuthUser(token, user.sub)
-  //         if (authUserData.success) {
-  //           setUserId(authUserData.data)
-  //           const userData = await getUser(token, authUserData.data)
-  //           if (userData.success) {
-  //             setUserObject(userData.data)
-  //             setIsLoadingGlobal(false)
-  //           } else {
-  //             ntfErrorRefresh(smthWrong.error)
-  //           }
-  //         } else {
-  //           if (authUserData.error === noUserMsg) {
-  //             const { name, nickname, given_name, family_name, email, sub } = user
-  //             const userName =
-  //               name || nickname || given_name || family_name || email || 'noname user'
-  //             const newUser = await createUser(token, sub, userName, email)
-  //             if (newUser.success) {
-  //               const userData = await getUser(token, newUser.data)
-  //               if (userData.success) {
-  //                 setUserObject(userData.data)
-  //                 setIsLoadingGlobal(false)
-  //               } else {
-  //                 ntfErrorRefresh(userData.error)
-  //               }
-  //             } else {
-  //               ntfErrorRefresh(newUser.error)
-  //             }
-  //           } else {
-  //             ntfErrorRefresh(authUserData.error)
-  //           }
-  //         }
-  //       }
-  //     } catch (e) {
-  //       ntfErrorRefresh(e.message, 'getMenu error')
-  //       console.log('getMenu Error:\n', e.message)
-  //     }
-  //   })()
-  //   // eslint-disable-next-line
-  // }, [token])
+  useEffect(() => {
+    if (!isBrowser || !isAuthenticated) {
+      console.log('window.location.pathname :>> ', window.location.pathname)
+      console.log('\n\nredirect :>>\n\n')
+      navigate(`/`)
+      return null
+    }
+  })
 
-  // //////////
-
-  // useEffect(() => {
-  //   console.log('questions :>> ', questions)
-  // }, [questions])
-
-  // useEffect(() => {
-  //   console.log('userInfo :>> ', userInfo)
-  // }, [userInfo])
-
-  if (!isBrowser || !isAuthenticated || window.location.pathname !== `/thegame`) {
-    navigate(`/`)
-    return null
-  }
+  useEffect(() => {
+    ;(async () => {
+      try {
+        setIsStartLoading(true)
+        if (!token) {
+          const _token = await getAccessTokenSilently({
+            audience: process.env.GATSBY_AUTH0_JWT_AUDIENCE,
+            scope: process.env.GATSBY_AUTH0_SCOPE,
+          })
+          setToken(_token)
+        } else {
+          if (!userInfo) {
+            const res = await axios({
+              method: 'POST',
+              url: `/api/registerUser`,
+              data: user,
+              headers,
+            })
+            if (res.data.success) {
+              setUserInfo(res.data.data)
+            } else {
+              console.log('res.data.error :>> ', res.data.error)
+              navigate('/')
+            }
+          } else {
+            if (userInfo.currentGame) {
+              setGameInfo(userInfo.currentGame)
+            }
+          }
+        }
+        setIsStartLoading(false)
+      } catch (e) {
+        console.log('user update error :>> ', e)
+        setIsStartLoading(false)
+      }
+    })()
+  }, [token, userInfo])
 
   return (
     <div className='game-inner'>
@@ -165,20 +134,27 @@ const TheGame = (props) => {
       {isStartLoading && <div className='loading-block starting'>starting</div>}
       {isAnswerLoading && <div className='loading-block answering'>answering</div>}
       <h2>The Game Page</h2>
-      {userInfo && (
+      {!userInfo ? (
+        <div className='loading-block global'>loading</div>
+      ) : (
         <>
           <h3>{`hello ${userInfo.name}`}</h3>
-          {userInfo.startTime ? (
+
+          {gameInfo ? (
             <>
-              <div className='timer'>timer</div>
-              {questions && (
+              <div className='timer'>
+                <p>{`Start time: ${gameInfo.startTime}`}</p>
+              </div>
+              {gameInfo.questions?.length && (
                 <div className='questions-list'>
-                  {questions.map((question, q) => (
+                  {gameInfo.questions.map((question, q) => (
                     <QuestionItem
+                      kiddy={gameInfo.kiddy}
+                      question={question}
                       key={q}
                       index={q + 1}
-                      questionId={question.id}
-                      setIsAnswerLoading={setIsAnswerLoading}
+                      setIsLoading={setIsAnswerLoading}
+                      handleAnswer={handleAnswer}
                     />
                   ))}
                 </div>
@@ -193,21 +169,6 @@ const TheGame = (props) => {
       )}
     </div>
   )
-  // ) : (
-  //   <h2>the game page is loading..</h2>
-  // )
 }
 
 export default withAuthenticationRequired(TheGame)
-
-// export const query = graphql`
-//   {
-//     site {
-//       buildTime(formatString: "YYYY-MM-DD hh:mm a z")
-//       siteMetadata {
-//         name
-//         tagline
-//       }
-//     }
-//   }
-// `

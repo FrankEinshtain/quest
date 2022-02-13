@@ -1,28 +1,30 @@
 import React, { useState, useEffect, useContext, useReducer } from 'react'
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'REGISTER_USER':
-      return {
-        ...state,
-        isLoading: true,
-      }
-    case 'START_THE_GAME':
-      return {
-        ...state,
-        isAuthenticated: !!action.user,
-        user: action.user,
-        isLoading: false,
-        error: undefined,
-      }
-    case 'ANSWER_THE_QUESTION':
-      return {
-        ...state,
-        isLoading: false,
-        error: action.error,
-      }
-  }
-}
+// import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
+
+// const reducer = (state, action) => {
+//   switch (action.type) {
+//     case 'REGISTER_USER':
+//       return {
+//         ...state,
+//         isLoading: true,
+//       }
+//     case 'START_THE_GAME':
+//       return {
+//         ...state,
+//         isAuthenticated: !!action.user,
+//         user: action.user,
+//         isLoading: false,
+//         error: undefined,
+//       }
+//     case 'ANSWER_THE_QUESTION':
+//       return {
+//         ...state,
+//         isLoading: false,
+//         error: action.error,
+//       }
+//   }
+// }
 
 export const UserGettersContext = React.createContext()
 export const UserSettersContext = React.createContext()
@@ -35,7 +37,6 @@ export const UserSettersContext = React.createContext()
 //   }
 
 //   const [state, dispatch] = useReducer(reducer, initialState)
-
 
 //   return (
 //       <UserGettersContext.Provider
@@ -52,12 +53,19 @@ export const UserSettersContext = React.createContext()
 // }
 
 export const UserContextProvider = (props) => {
+  // const {
+  //   isLoading,
+  //   isAuthenticated,
+  //   error,
+  //   user,
+  //   loginWithRedirect,
+  //   getAccessTokenSilently,
+  //   logout,
+  // } = useAuth0()
 
   const [token, setToken] = useState(null)
   const [userInfo, setUserInfo] = useState(null)
   const [questions, setQuestions] = useState([])
-
-
 
   return (
     <UserSettersContext.Provider
